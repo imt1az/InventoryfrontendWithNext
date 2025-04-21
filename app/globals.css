@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* Vibrant dashboard colors */
+  --text-primary: #111827;    /* Main text - dark gray */
+  --text-purple: #6b21a8;     /* Purple text */
+  --text-blue: #1e40af;       /* Blue text */
+  --text-green: #166534;      /* Green text */
+  --text-red: #b91c1c;        /* Red text */
+  --text-orange: #9a3412;     /* Orange text */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    
+    /* Dark mode vibrant colors */
+    --text-primary: #f3f4f6;
+    --text-purple: #c084fc;
+    --text-blue: #60a5fa;
+    --text-green: #4ade80;
+    --text-red: #f87171;
+    --text-orange: #fb923c;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Add these utility classes */
+.text-vibrant-purple {
+  color: var(--text-purple) !important;
+}
+
+.text-vibrant-blue {
+  color: var(--text-blue) !important;
+}
+
+.text-vibrant-green {
+  color: var(--text-green) !important;
+}
+
+.text-vibrant-red {
+  color: var(--text-red) !important;
+}
+
+.text-vibrant-orange {
+  color: var(--text-orange) !important;
+}
+
+/* Make sure white text on colored backgrounds is visible */
+[class*="bg-gradient"] *, [class*="bg-purple"] *, [class*="bg-blue"] *, 
+[class*="bg-pink"] *, [class*="bg-green"] *, [class*="bg-orange"] * {
+  color: rgb(61, 47, 47) !important;
+  text-shadow: 0 1px 2px rgba(245, 245, 245, 0.2);
+  font-weight: 600;
+}
