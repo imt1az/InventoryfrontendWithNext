@@ -27,15 +27,19 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (identifier, password) => {
-    await api.get('/sanctum/csrf-cookie');
-    await api.post('/api/login', { identifier, password });
-    await fetchUser();
+    await api.get('/sanctum/csrf-cookie'); // CSRF cookie set করতে হবে
+    await api.post('/api/login', { identifier, password }); // Login request
+    await fetchUser(); // User fetch করে context update
   };
 
   const logout = async () => {
-    await api.post('/api/logout');
-    setUser(null);
-    router.push('/login');
+    try {
+      await api.post('/api/logout'); // Proper API endpoint
+      setUser(null);
+      router.push('/login');
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
