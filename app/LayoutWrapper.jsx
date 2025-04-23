@@ -1,44 +1,48 @@
-"use client";
+'use client';
 
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import api from "@/lib/axios";
-import Sidebar from "./dashboard/sidebar";
-import Header from "./dashboard/header";
+import { useAuth } from '@/context/AuthContext';
+import { usePathname, useRouter } from 'next/navigation';
+import Sidebar from './dashboard/sidebar';
+import Header from './dashboard/header';
+import { useEffect } from 'react';
 
 export default function LayoutWrapper({ children }) {
+  const { user, loading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const isAuthPage = pathname === "/login" || pathname === "/register";
 
-  const [loading, setLoading] = useState(!isAuthPage);
+  const isAuthPage = pathname === '/login' || pathname === '/register';
 
+  // 🔄 Auth route protection
   useEffect(() => {
-    if (!isAuthPage) {
-      api.get("/api/me")
-        .then(() => {
-            console.log("User is authenticated");
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-         
-          router.push("/login");
-        });
+    if (!loading) {
+      if (!user && !isAuthPage) {
+        router.replace('/login'); // ✅ replace instead of push
+      } else if (user && isAuthPage) {
+        router.replace('/dashboard');
+      }
     }
-  }, [pathname]);
+  }, [user, loading, pathname]);
 
-  if (loading) return <div className="text-center p-10">Loading...</div>; // optional spinner
+  // 🕓 Loading
+  if (loading) return <div className="text-center p-10">Checking auth...</div>;
 
-  return isAuthPage ? (
-    children
-  ) : (
-    <div className="flex h-screen bg-gradient-to-br from-purple-50 to-pink-50">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+  // 🛑 Prevent render while redirecting
+  if (!user && !isAuthPage) return null;
+
+  // ✅ Dashboard Layout
+  if (!isAuthPage) {
+    return (
+      <div className="flex h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Header />
+          <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // ✅ Guest layout
+  return children;
 }

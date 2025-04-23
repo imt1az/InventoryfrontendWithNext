@@ -1,25 +1,32 @@
 'use client';
 
-import { useState } from 'react';
-import api from '@/lib/axios';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext'; // ✅ এটি গুরুত্বপূর্ণ
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login, user } = useAuth(); // ✅ context থেকে login ফাংশন
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // 🔁 যদি user থাকে, তাহলে সরাসরি /dashboard-এ পাঠাও
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await api.get('/sanctum/csrf-cookie');
-      await api.post('/api/login', { identifier, password });
-      setTimeout(() => router.push('/dashboard'), 500);
+      await login(identifier, password); // ✅ context-based login call
+      router.push('/dashboard');
     } catch (err) {
       setError(err?.response?.data?.message || 'Login failed');
     } finally {
@@ -35,9 +42,7 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="max-w-md w-full bg-white p-8 rounded-lg shadow-xl"
       >
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
-          Login
-        </h2>
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Login</h2>
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -49,26 +54,22 @@ export default function LoginPage() {
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
-              Email or Phone
-            </label>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Email or Phone</label>
             <input
               type="text"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+              className="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
-              Password
-            </label>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+              className="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -91,12 +92,7 @@ export default function LoginPage() {
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{' '}
-            <a
-              href="/register"
-              className="text-blue-500 hover:underline transition duration-200"
-            >
-              Sign up
-            </a>
+            <a href="/register" className="text-blue-500 hover:underline">Sign up</a>
           </p>
         </div>
       </motion.div>
