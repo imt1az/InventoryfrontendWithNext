@@ -29,6 +29,7 @@ export function AuthProvider({ children }) {
   const login = async (identifier, password) => {
     await api.get('/sanctum/csrf-cookie'); // CSRF cookie set করতে হবে
     await api.post('/api/login', { identifier, password }); // Login request
+   
     await fetchUser(); // User fetch করে context update
   };
 

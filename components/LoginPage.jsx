@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext'; // ✅ এটি গুরুত্বপূর্ণ
 
 export default function LoginPage() {
-  
   const router = useRouter();
   const { login, user } = useAuth(); // ✅ context থেকে login ফাংশন
   const [identifier, setIdentifier] = useState('');
@@ -25,22 +24,23 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       await login(identifier, password); // ✅ context-based login call
       router.push('/dashboard');
     } catch (err) {
-      setError('Invalid email/phone or password.');
+      setError(err?.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-purple-50 to-pink-50">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md space-y-6"
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-indigo-200">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full bg-white p-8 rounded-lg shadow-xl"
       >
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Login</h2>
         {error && (
@@ -95,26 +95,7 @@ export default function LoginPage() {
             <a href="/register" className="text-blue-500 hover:underline">Sign up</a>
           </p>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-purple-200"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition duration-200"
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+      </motion.div>
     </div>
   );
 }
