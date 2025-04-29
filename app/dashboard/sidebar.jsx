@@ -9,7 +9,7 @@ export default function Sidebar() {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: "📊", color: "from-purple-500 to-pink-500" },
     { name: "Users", href: "/dashboard/users", icon: "👥", color: "from-blue-500 to-teal-400" },
-    { name: "Products", href: "/dashboard/products", icon: "📦", color: "from-green-500 to-emerald-400" },
+    { name: "Products", href: "/products", icon: "📦", color: "from-green-500 to-emerald-400" },
     { name: "Orders", href: "/dashboard/orders", icon: "🛒", color: "from-orange-500 to-yellow-400" },
     { name: "Analytics", href: "/dashboard/analytics", icon: "📈", color: "from-red-500 to-pink-500" },
     { name: "Settings", href: "/dashboard/settings", icon: "⚙️", color: "from-indigo-500 to-purple-500" },
